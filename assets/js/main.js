@@ -1,5 +1,5 @@
 /**
- * EDMOR GAMEPASS - GITHUB REPO FIXED EDITION
+ * EDMOR GAMEPASS - ULTIMATE STABLE
  */
 
 const games = [
@@ -7,7 +7,6 @@ const games = [
         id: 1, 
         title: "TEKKEN 3", 
         cover: "https://images.alphacoders.com/270/270636.jpg", 
-        // ROM linkini doğrudan, proxy'siz ama tam güvenli protokol ile çekiyoruz
         rom: "https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd" 
     }
 ];
@@ -20,6 +19,12 @@ window.onload = () => {
     renderGames();
     startClock();
     updateLoop();
+    
+    // Geri tuşu kontrolü
+    window.addEventListener('popstate', handleBackToMenu);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape" || e.key === "Backspace") handleBackToMenu();
+    });
 };
 
 function renderGames() {
@@ -33,17 +38,32 @@ function renderGames() {
     `).join('');
 }
 
+function handleBackToMenu() {
+    if (isPlaying) {
+        // Sayfayı yenilemek en temiz yöntemdir (Belleği boşaltır ve sesi durdurur)
+        window.location.reload(); 
+    }
+}
+
 function updateLoop() {
     const gps = navigator.getGamepads();
     const gp = gps[0];
-    if (!gp) { updateStatus(false); requestAnimationFrame(updateLoop); return; }
+    
+    if (!gp) { 
+        updateStatus(false); 
+        requestAnimationFrame(updateLoop); 
+        return; 
+    }
+    
     updateStatus(true, gp.id);
 
     if (!isPlaying && canMove) {
         const right = gp.axes[0] > 0.5 || gp.buttons[15]?.pressed;
         const left = gp.axes[0] < -0.5 || gp.buttons[14]?.pressed;
+        
         if (right) { moveFocus(1); debounceInput(); }
         else if (left) { moveFocus(-1); debounceInput(); }
+        
         if (gp.buttons[0].pressed) { handleStartGame(); }
     }
     requestAnimationFrame(updateLoop);
@@ -57,36 +77,47 @@ function moveFocus(dir) {
     cards[focusIndex].classList.add('focused');
 }
 
-function debounceInput() { canMove = false; setTimeout(() => { canMove = true; }, 180); }
+function debounceInput() { 
+    canMove = false; 
+    setTimeout(() => { canMove = true; }, 180); 
+}
 
 function handleStartGame() {
     const selectedGame = games[focusIndex];
-    if (!selectedGame.rom.includes("http")) return;
-
     isPlaying = true;
+    
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    // GitHub'da klasör yapısı: ardaakpinar27.github.io/edmorentertainment/
-    const baseUrl = window.location.origin + "/edmorentertainment/";
+    const repoPath = window.location.pathname.includes('edmorentertainment') ? '/edmorentertainment/' : '/';
+    const baseUrl = window.location.origin + repoPath;
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
-    
-    // BIOS ve Veri yollarını mutlak olarak tanımlıyoruz
     window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
-    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/"; // Emulator klasörü burada (Bulutta)
+    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
     window.EJS_video_filter = "nearest";
-    window.EJS_softfilter = false;
-
+    
+    // --- SES VE KOL OPTİMİZASYONU ---
+    window.EJS_threads = true;
+    window.EJS_forceVSync = true;
+    
     window.EJS_settings = {
-        "psx_gpu_upscale": "2x",
-        "psx_gpu_precision": "high"
+        "psx_gpu_upscale": "2x", // Görüntü kalitesi korunuyor
+        "audio_buffer": 4096,    // Ses kesilmesini önlemek için tampon yükseltildi
+        "audio_driver": "webaudio"
+    };
+
+    // Oyun başlayınca kolu ve odağı emülatöre bağla
+    window.EJS_onGameStart = () => {
+        console.log("Oyun başladı, odaklanılıyor...");
+        const canvas = document.querySelector('canvas');
+        if (canvas) canvas.focus();
     };
 
     const script = document.createElement("script");
