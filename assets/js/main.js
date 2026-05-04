@@ -1,5 +1,6 @@
 /**
- * EDMOR GAMEPASS - GITHUB PAGES FINAL FIX
+ * EDMOR GAMEPASS - GITHUB PAGES PROXY EDITION
+ * Bu dosya CORS (Network Error) hatalarını aşmak için yapılandırılmıştır.
  */
 
 const games = [
@@ -7,7 +8,8 @@ const games = [
         id: 1, 
         title: "TEKKEN 3", 
         cover: "https://images.alphacoders.com/270/270636.jpg", 
-        rom: "https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd" 
+        // CORS Proxy eklenmiş link:
+        rom: "https://corsproxy.io/?https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd" 
     }
 ];
 
@@ -67,26 +69,28 @@ function handleStartGame() {
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    // GitHub Pages için kesin yol belirleme
-    const repoName = "edmorentertainment";
+    // GitHub Pages alt klasör yapısını (edmorentertainment) yakalar
+    const pathArray = window.location.pathname.split('/');
+    const repoName = pathArray[1]; 
     const baseUrl = window.location.origin + '/' + repoName + '/';
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
     
-    // BIOS Dosyası (Küçük harf hassasiyetine dikkat!)
+    // BIOS Dosya Yolu
     window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
     
+    // Emülatör Motoru Dosyaları
     window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     
+    // Görüntü ve Geniş Ekran Ayarları
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
-    window.EJS_video_filter = "nearest"; // Keskin pikseller
+    window.EJS_video_filter = "nearest"; 
     window.EJS_softfilter = false;
 
-    // Performans ve Keskinlik Ayarları
     window.EJS_settings = {
         "psx_gpu_upscale": "2x",
         "psx_gpu_precision": "high"
