@@ -1,6 +1,5 @@
 /**
- * EDMOR GAMEPASS - GITHUB PAGES AGGRESSIVE EDITION
- * Repo: edmorentertainment
+ * EDMOR GAMEPASS - GITHUB PAGES FINAL FIX
  */
 
 const games = [
@@ -60,7 +59,6 @@ function moveFocus(dir) {
 
 function debounceInput() { canMove = false; setTimeout(() => { canMove = true; }, 180); }
 
-// --- EMÜLATÖR ÇALIŞTIRMA ---
 function handleStartGame() {
     const selectedGame = games[focusIndex];
     if (!selectedGame.rom.startsWith("http")) return;
@@ -69,31 +67,29 @@ function handleStartGame() {
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    // GitHub Pages alt klasör yapısını (edmorentertainment) otomatik çözer
-    const pathArray = window.location.pathname.split('/');
-    const repoName = pathArray[1]; 
+    // GitHub Pages için kesin yol belirleme
+    const repoName = "edmorentertainment";
     const baseUrl = window.location.origin + '/' + repoName + '/';
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
     
-    // BIOS Yolu (SCPH1001.BIN dosyanın ismine göre güncellendi)
+    // BIOS Dosyası (Küçük harf hassasiyetine dikkat!)
     window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
     
-    // Motor Dosyaları
     window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     
-    // Görüntü ve Geniş Ekran Ayarları
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
     window.EJS_video_filter = "nearest"; // Keskin pikseller
     window.EJS_softfilter = false;
 
+    // Performans ve Keskinlik Ayarları
     window.EJS_settings = {
-        "psx_gpu_upscale": "2x", // 2x çözünürlük
-        "psx_gpu_precision": "high" // Poligon titreme engelleme
+        "psx_gpu_upscale": "2x",
+        "psx_gpu_precision": "high"
     };
 
     const script = document.createElement("script");
