@@ -1,5 +1,6 @@
 /**
- * EDMOR GAMEPASS - GITHUB PAGES EDITION
+ * EDMOR GAMEPASS - GITHUB PAGES AGGRESSIVE EDITION
+ * Repo: edmorentertainment
  */
 
 const games = [
@@ -50,13 +51,16 @@ function updateLoop() {
 
 function moveFocus(dir) {
     const cards = document.querySelectorAll('.game-card');
+    if (cards.length === 0) return;
     cards[focusIndex].classList.remove('focused');
     focusIndex = (focusIndex + dir + cards.length) % cards.length;
     cards[focusIndex].classList.add('focused');
+    cards[focusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function debounceInput() { canMove = false; setTimeout(() => { canMove = true; }, 180); }
 
+// --- EMÜLATÖR ÇALIŞTIRMA ---
 function handleStartGame() {
     const selectedGame = games[focusIndex];
     if (!selectedGame.rom.startsWith("http")) return;
@@ -65,27 +69,31 @@ function handleStartGame() {
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    // GitHub Pages Alt Klasör Çözümü
-    const repoPath = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+    // GitHub Pages alt klasör yapısını (edmorentertainment) otomatik çözer
+    const pathArray = window.location.pathname.split('/');
+    const repoName = pathArray[1]; 
+    const baseUrl = window.location.origin + '/' + repoName + '/';
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
     
-    // BIOS Yolunu GitHub yapısına göre ayarla
-    window.EJS_biosUrl = window.location.origin + repoPath + "data/bios/scph1001.bin";
+    // BIOS Yolu (SCPH1001.BIN dosyanın ismine göre güncellendi)
+    window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
     
+    // Motor Dosyaları
     window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     
+    // Görüntü ve Geniş Ekran Ayarları
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
-    window.EJS_video_filter = "nearest";
+    window.EJS_video_filter = "nearest"; // Keskin pikseller
     window.EJS_softfilter = false;
 
     window.EJS_settings = {
-        "psx_gpu_upscale": "2x",
-        "psx_gpu_precision": "high"
+        "psx_gpu_upscale": "2x", // 2x çözünürlük
+        "psx_gpu_precision": "high" // Poligon titreme engelleme
     };
 
     const script = document.createElement("script");
