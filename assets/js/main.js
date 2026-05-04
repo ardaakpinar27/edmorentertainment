@@ -1,5 +1,5 @@
 /**
- * EDMOR GAMEPASS - STABLE LOAD EDITION
+ * EDMOR GAMEPASS - GITHUB REPO FIXED EDITION
  */
 
 const games = [
@@ -7,8 +7,8 @@ const games = [
         id: 1, 
         title: "TEKKEN 3", 
         cover: "https://images.alphacoders.com/270/270636.jpg", 
-        // Alternatif Proxy: cors-anywhere veya AllOrigins yerine doğrudan proxy'siz deneme veya alternatif proxy
-        rom: "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd")
+        // ROM linkini doğrudan, proxy'siz ama tam güvenli protokol ile çekiyoruz
+        rom: "https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd" 
     }
 ];
 
@@ -67,25 +67,22 @@ function handleStartGame() {
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    const pathArray = window.location.pathname.split('/');
-    const repoName = "edmorentertainment"; 
-    const baseUrl = window.location.origin + '/' + repoName + '/';
+    // GitHub'da klasör yapısı: ardaakpinar27.github.io/edmorentertainment/
+    const baseUrl = window.location.origin + "/edmorentertainment/";
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
+    
+    // BIOS ve Veri yollarını mutlak olarak tanımlıyoruz
     window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
-    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+    window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/"; // Emulator klasörü burada (Bulutta)
     
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
     window.EJS_video_filter = "nearest";
     window.EJS_softfilter = false;
-
-    // AĞ HATALARINI ÖNLEMEK İÇİN EK AYARLAR
-    window.EJS_loadStateURL = "";
-    window.EJS_downloadSync = true; // Senkron indirmeyi zorla
 
     window.EJS_settings = {
         "psx_gpu_upscale": "2x",
