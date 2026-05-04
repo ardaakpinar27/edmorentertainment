@@ -1,6 +1,5 @@
 /**
- * EDMOR GAMEPASS - GITHUB PAGES PROXY EDITION
- * Bu dosya CORS (Network Error) hatalarını aşmak için yapılandırılmıştır.
+ * EDMOR GAMEPASS - STABLE LOAD EDITION
  */
 
 const games = [
@@ -8,8 +7,8 @@ const games = [
         id: 1, 
         title: "TEKKEN 3", 
         cover: "https://images.alphacoders.com/270/270636.jpg", 
-        // CORS Proxy eklenmiş link:
-        rom: "https://corsproxy.io/?https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd" 
+        // Alternatif Proxy: cors-anywhere veya AllOrigins yerine doğrudan proxy'siz deneme veya alternatif proxy
+        rom: "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://filedn.eu/liPnBWWQgeQVeGgdPoPnl8S/ps1roms/tekken3.chd")
     }
 ];
 
@@ -56,40 +55,37 @@ function moveFocus(dir) {
     cards[focusIndex].classList.remove('focused');
     focusIndex = (focusIndex + dir + cards.length) % cards.length;
     cards[focusIndex].classList.add('focused');
-    cards[focusIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function debounceInput() { canMove = false; setTimeout(() => { canMove = true; }, 180); }
 
 function handleStartGame() {
     const selectedGame = games[focusIndex];
-    if (!selectedGame.rom.startsWith("http")) return;
+    if (!selectedGame.rom.includes("http")) return;
 
     isPlaying = true;
     document.getElementById('launcher-ui').classList.add('hidden');
     document.getElementById('emulator-layer').style.display = 'block';
 
-    // GitHub Pages alt klasör yapısını (edmorentertainment) yakalar
     const pathArray = window.location.pathname.split('/');
-    const repoName = pathArray[1]; 
+    const repoName = "edmorentertainment"; 
     const baseUrl = window.location.origin + '/' + repoName + '/';
 
     window.EJS_player = "#canvas-wrapper";
     window.EJS_core = "psx"; 
     window.EJS_gameUrl = selectedGame.rom; 
-    
-    // BIOS Dosya Yolu
     window.EJS_biosUrl = baseUrl + "data/bios/scph1001.bin";
-    
-    // Emülatör Motoru Dosyaları
     window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     
-    // Görüntü ve Geniş Ekran Ayarları
     window.EJS_startOnLoaded = true;
     window.EJS_aspectRatio = "16/9"; 
     window.EJS_widescreenHack = true; 
-    window.EJS_video_filter = "nearest"; 
+    window.EJS_video_filter = "nearest";
     window.EJS_softfilter = false;
+
+    // AĞ HATALARINI ÖNLEMEK İÇİN EK AYARLAR
+    window.EJS_loadStateURL = "";
+    window.EJS_downloadSync = true; // Senkron indirmeyi zorla
 
     window.EJS_settings = {
         "psx_gpu_upscale": "2x",
@@ -103,17 +99,15 @@ function handleStartGame() {
 
 function updateStatus(connected, name = "") {
     const status = document.getElementById('gamepad-status');
-    if (connected) {
-        status.className = "connected";
-        status.innerText = "● " + name.substring(0, 15).toUpperCase();
-    } else {
-        status.className = "disconnected";
-        status.innerText = "● DISCONNECTED";
+    if (status) {
+        status.className = connected ? "connected" : "disconnected";
+        status.innerText = connected ? "● " + name.substring(0, 15).toUpperCase() : "● DISCONNECTED";
     }
 }
 
 function startClock() {
     setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const clock = document.getElementById('clock');
+        if (clock) clock.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }, 1000);
 }
