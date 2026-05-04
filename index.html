@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EDMOR GamePass</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
 </head>
 <body>
 
@@ -17,30 +15,28 @@
                 <span id="clock">00:00</span>
             </div>
             
-            <!-- Eklenti Butonu -->
+            <!-- Eklenti Butonu (Sadece gerekli olan kısım) -->
             <div id="extension-tool">
                 <a href="https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafcepgpndahomeajglpckpkeicid" target="_blank" id="cors-btn">
-                    <i class="fas fa-plug"></i> CORS EXTENSION
+                    CORS EXTENSION
                 </a>
             </div>
         </div>
 
         <div id="main-content">
-            <h1 class="title">EDMOR <span>GAMEPASS</span></h1>
             <div id="game-grid" class="game-grid">
-                <!-- Oyunlar JS ile buraya yüklenecek -->
+                <!-- Oyunlar JS ile buraya gelecek -->
             </div>
         </div>
 
         <div id="footer">
             <div class="controls-hint">
-                <span><b class="btn-a">A</b> SEÇ</span>
-                <span><b class="btn-dir">◀ ▶</b> GEZİN</span>
+                <span><b>A</b> SEÇ</span>
+                <span><b>◀ ▶</b> GEZİN</span>
             </div>
         </div>
     </div>
 
-    <!-- Emülatör Katmanı -->
     <div id="emulator-layer" style="display: none;">
         <div id="canvas-wrapper"></div>
     </div>
